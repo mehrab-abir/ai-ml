@@ -38,3 +38,11 @@ if(imageCols):
     for i,singleImage in enumerate(imageCols):
         with cols[i]:
             st.image(singleImage)
+
+st.divider()
+st.header("Image from local directory:")
+st.image("images/nature-1.jpg")
+
+st.divider()
+st.header("Image from internet via link:")
+st.image("https://postquantum.com/wp-content/uploads/2018/12/Superconducting-Quantum-Computer-1536x977.jpg.webp")
