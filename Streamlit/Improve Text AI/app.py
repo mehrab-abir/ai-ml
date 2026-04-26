@@ -1,28 +1,32 @@
 import streamlit as st
-import time
 from dotenv import load_dotenv
 from google import genai
 import os
+import time
 
 load_dotenv()
 
-st.header("LLM using Gemini API")
+st.header("Give your text a professional tone:")
 st.divider()
 
-api_key = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
+apiKey = os.getenv("GEMINI_API_KEY")
 
-prompt = st.text_input("Ask something")
+client = genai.Client(api_key=apiKey)
 
 def stream_text(text):
     for word in text.split(" "):
-        yield word + " "
+        yield word + ' '
         time.sleep(0.05)
+        
 
-if prompt: 
+text = st.text_input("Write a text: ")
+
+if text:
     response = client.models.generate_content(
         model = "gemini-3-flash-preview",
-        contents = prompt
+        contents = f"refurbish this text with professional tone and language: {text}"
     )
-
+    
     st.write_stream(stream_text(response.text))
+    
+
