@@ -1,8 +1,16 @@
 import streamlit as st
+from apiCalling import note_generator
+from PIL import Image
+import time
 
 st.header("Note Summary and Quiz Generator")
 st.subheader("Upload images and have AI make quizzes for you")
 st.divider()
+
+def stream_text(text):
+    for word in text.split(" "):
+        yield word + " "
+        time.sleep(0.05)
 
 with st.sidebar:
     images = st.file_uploader("Upload upto 3 images of your content: ",
@@ -32,9 +40,18 @@ if btn:
         st.error("Select a difficulty level")
         
     if images and difficulty:
+        pil_images = []
+        
+        for img in images:
+            pil_img = Image.open(img)
+            pil_images.append(pil_img)
+        
         with st.container(border=True):
             st.subheader("Summarized Note:")
-            st.write("Note text here....")
+
+            with st.spinner("Summarizing note..."):
+                summarized_note = note_generator(pil_images)
+                st.write_stream(stream_text(summarized_note))
         
         with st.container(border=True):
             st.subheader(f"Quiz (Difficulty: {difficulty})")
