@@ -1,5 +1,6 @@
 import streamlit as st
 from apiCalling import note_generator
+from apiCalling import quiz_generator
 from PIL import Image
 import time
 
@@ -16,6 +17,11 @@ with st.sidebar:
     images = st.file_uploader("Upload upto 3 images of your content: ",
                               type=["jpg","jpeg","png"],
                               accept_multiple_files=True)
+    
+    pil_images = []
+    for img in images:
+        pil_img = Image.open(img)
+        pil_images.append(pil_img)
 
     if images:
         if(len(images) > 3):
@@ -40,12 +46,6 @@ if btn:
         st.error("Select a difficulty level")
         
     if images and difficulty:
-        pil_images = []
-        
-        for img in images:
-            pil_img = Image.open(img)
-            pil_images.append(pil_img)
-        
         with st.container(border=True):
             st.subheader("Summarized Note:")
 
@@ -54,8 +54,10 @@ if btn:
                 st.write_stream(stream_text(summarized_note))
         
         with st.container(border=True):
-            st.subheader(f"Quiz (Difficulty: {difficulty})")
-            st.write("Quiz here....")
+            with st.spinner("Generating quiz..."):
+                st.subheader(f"Quiz (Difficulty: {difficulty})")
+                generated_quiz = quiz_generator(pil_images,difficulty)
+                st.write_stream(stream_text(generated_quiz))
             
     
     

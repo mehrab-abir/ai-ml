@@ -16,3 +16,13 @@ def note_generator(images):
     )
     
     return response.text
+
+def quiz_generator(images, difficultyLevel):
+    prompt = f"make 5 quiz questions from the content of these images maintaining difficulty level {difficultyLevel}, among three options Easy, Medium, Hard";
+    
+    response = client.models.generate_content(
+        model = "gemini-3-flash-preview",
+        contents=[images,prompt]
+    )
+    
+    return response.text
