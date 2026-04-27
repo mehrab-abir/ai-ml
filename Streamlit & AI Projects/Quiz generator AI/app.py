@@ -1,6 +1,5 @@
 import streamlit as st
-from apiCalling import note_generator
-from apiCalling import quiz_generator
+from apiCalling import note_generator, quiz_generator, audio_transcription
 from PIL import Image
 import time
 
@@ -46,18 +45,32 @@ if btn:
         st.error("Select a difficulty level")
         
     if images and difficulty:
-        with st.container(border=True):
-            st.subheader("Summarized Note:")
+        if(len(images)>3):
+            st.error("Maximum 3 images allowed")
+        else:
+            with st.container(border=True):
+                st.subheader("Summarized Note:")
 
-            with st.spinner("Summarizing note..."):
-                summarized_note = note_generator(pil_images)
-                st.write_stream(stream_text(summarized_note))
-        
-        with st.container(border=True):
-            with st.spinner("Generating quiz..."):
+                with st.spinner("Summarizing note..."):
+                    summarized_note = note_generator(pil_images)
+                    st.write_stream(stream_text(summarized_note))
+            with st.container(border=True):
+                st.subheader("Audio Transcription:")
+                with st.spinner("Generating audio: "):
+                    
+                    #clearning markdown symbols
+                    summarized_note = summarized_note.replace("#",'')
+                    summarized_note = summarized_note.replace("*",'')
+                    summarized_note = summarized_note.replace("$",'')
+                    
+                    audioTranscribe = audio_transcription(summarized_note)
+                    st.audio(audioTranscribe)
+            
+            with st.container(border=True):
                 st.subheader(f"Quiz (Difficulty: {difficulty})")
-                generated_quiz = quiz_generator(pil_images,difficulty)
-                st.write_stream(stream_text(generated_quiz))
+                with st.spinner("Generating quiz..."):
+                    generated_quiz = quiz_generator(pil_images,difficulty)
+                    st.write_stream(stream_text(generated_quiz))
             
     
     
